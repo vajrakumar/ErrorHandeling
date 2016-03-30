@@ -7,7 +7,9 @@ log4js.configure({
         type: 'console'
     }, {
         type: 'file',
-        filename: './logs/ErrorHandling.log'
+        filename: './logs/ErrorHandling.log',
+        maxLogSize: 1000000,
+        backups: 10
     }]
 });
 
