@@ -1,13 +1,19 @@
 {
-  "name": "test",
+  "name": "error-handling",
   "version": "1.0.0",
-  "description": "",
+  "description": "This project is to explain the error handling in server side (Node.js & Express.js) and transferring the same to client side (ExtJS).",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
-  "author": "",
+  "author": "Vajrakumar <vajra@sencha.com>",
+  "contributors": [
+    "Vajrakumar <vajra@sencha.com>",
+    "Manojkumar <manoj.kumar@sencha.com>"
+  ],
   "license": "ISC",
+  "private": true,
   "dependencies": {
     "body-parser": "^1.15.0",
     "bookshelf": "^0.9.2",
@@ -15,6 +21,20 @@
     "knex": "^0.10.0",
     "log4js": "^0.6.33",
     "pg": "^4.5.1",
+    "serve-favicon": "^2.3.0",
     "underscore": "^1.8.3"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vajrakumar/ErrorHandling.git"
+  },
+  "keywords": [
+    "error-handling",
+    "extjs"
+  ],
+  "bugs": {
+    "url": "https://github.com/vajrakumar/ErrorHandling/issues"
+  },
+  "homepage": "https://github.com/vajrakumar/ErrorHandling#readme"
 }
