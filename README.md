@@ -71,13 +71,13 @@ log4js.configure({
 
 ### Using `next` in express 
 
-An Express application is essentially a series of middleware function calls. Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. 
- 
-**If the current middleware function does not end the request-response cycle, it must call next() to pass control to the next middleware function.**
+An Express application is essentially a series of middleware function calls. Middleware functions are functions that have access to the request object (`req`), the response object (`res`), and the next middleware function in the application’s request-response cycle. The next middleware function is commonly denoted by a variable named `next`.
+
+**If the current middleware function does not end the request-response cycle, it must call `next()` to pass control to the next middleware function.**
 
 Here are the different middleware functions we have used in our application,
 
-Boday Parser is a third-party middleware function that matches all the requests (when route path is not given, the middleware function will be executed on all the requests to the server), which will be executed first before any other middleware function in `server.js`, parses the data sent on the request body. `req.body` will be valid only when this middleware function is executed.
+Boday Parser is a third-party middleware function that matches all the requests (when route path is not specified, then that middleware function will be executed on all the requests to the server), which will be executed first before any other middleware function in `server.js`, parses the data sent on the request body. `req.body` will be valid only when this middleware function is executed.
 
 Body Parser will not involve in any response cycle, so it will just call `next()` which will transfer the control back to `server.js`.
 
@@ -85,13 +85,13 @@ Body Parser will not involve in any response cycle, so it will just call `next()
 app.use(bodyParser.json());
 ```
 
-Then comes to the built-in middleware function `express.static` (only when matches the route path '/') to load the ExtJS client application.
+Then comes to the built-in middleware function `express.static` (only when the path matches `'/'`) to load the ExtJS client application.
 
 ```
 app.use('/', express.static(__dirname + "/app"));
 ```
 
-Thereafter we have several application-level middlewares defined for specific path to handle the API request. And finally at the bototm we got one application-level middleware named `success` and one error-handling middleware named `error`, either of this will be called based on the response from PGSQL / Bookshelf. 
+Thereafter we have several application-level middlewares defined for specific path to handle the API requests. And finally at the bototm we got one application-level middleware named `success` and one error-handling middleware named `error`, either of this will be called based on the response from `PGSQL` or `Bookshelf`.
 
 ```
 app.use(success);
@@ -100,11 +100,11 @@ app.use(error);
 
 Here we go with a example
 
-Let's assume the following request hits the server
+Let's assume the following request hits our server
 
-`http://localhost:3000/user/24` 
+`http://localhost:3000/user/24`
 
-As discussed above, the first middleware will be body parser which will parse the request body for the other middle wares. Then it reaches the user get function,
+As discussed above, the first middleware will be body parser which will parse the request body for the other middlewares. Then it reaches the user get function,
 
 ```
 app.get('/user/:id', function (req, res, next) {
@@ -114,15 +114,15 @@ app.get('/user/:id', function (req, res, next) {
         req.model = model;
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to get user.'
+        req.errorMessage = 'Failed to get user.';
         next(err);
     });
 });
 ```
 
-Where we use bookshelf to get the particular user record from PGSQL. Let's assume we have no user record associated with id 24, so it will throw an error (because we have passed `require: true` to `fetch`, if require is set to false it will not throw an error. for more details go through [Bookshelfjs](http://bookshelfjs.org/)) and the control is passed to the catch block where we append a user friendly error message on request object then call next with error object.
+Where we use `bookshelf` to get the particular user record from `PGSQL`. Let's assume we have no user record associated with id 24, so it will throw an error (because we have passed `require: true` to `fetch`, if `require` is set to `false` `bookshelf` will not throw an error. for more details go through [Bookshelfjs](http://bookshelfjs.org/)) and the control is transferred to the catch block where we append a user friendly error message to request object (`req.errorMessage = 'Failed to get user.';`) then call `next` with error object (`next(err);`).
 
-The only difference between error-hanlding middleware and others is, error handling middleware will be defined after all other middlewares on the app object with 4 arguments instead 3.
+The only difference between error-hanlding middleware and others is, they should be defined after all other middlewares on the app object with 4 arguments instead of 3.
 
 ```
 function error(err, req, res, next) {
@@ -147,9 +147,9 @@ function error(err, req, res, next) {
 }
 ```
 
-As the catch block calls the next callback with a error object as first argument, the control will be transferd to the error-handling middleware, where we log the error and other essential information with log4js then send a error response to the client.
+As the catch block calls the `next` callback with a error object as first argument (`next(err);`), the control will be transferd to the error-handling middleware, where we log the error and other essential information with log4js then sends a error response to the client.
 
-Now let's assume we do have a user record associated with id 24, now the control will be transfered to the promise function where we append the user model on the request object then calls next callback wihout any argument which means the control should be transferred to the next application-level middleware and not error-handling middleware.
+Now let's assume we do have a user record associated with id 24, now the control will be transfered to the promise function where we append the user model to the request object (`req.model = model;`) then call `next` callback wihout any argument (`next()`) which means the control should be transferred to the next application-level middleware and not error-handling middleware.
 
 ```
 function success(req, res, next) {
@@ -165,15 +165,15 @@ function success(req, res, next) {
 }
 ```
 
-The success middleware verifies whether the request object has a valid model, if then send a success response to the client.
+The success middleware verifies whether the request object has a valid model, if then sends a success response to the client.
 
-Whenver a invalid request is passed to the server, for i.e
+Whenver a invalid request is passed to the server, for example
 
 `http://localhost:3000/SomethingNotDefined`
 
-It will directly hit the success middle ware function (only after body parser as per the hierarchy), as the request object won't have a valid model it will call the next callback with a generic error object, now the control will be transfered to error-handling middleware and failure response is sent.
+It will directly hit the success middleware function (only after body parser as per the hierarchy), as the request object won't have a valid model it will call the `next` callback with a generic error object, now the control will be transfered to error-handling middleware and failure response is sent to the client.
 
-**Note:** Even if there is no error-handling middlewares defined in our app, express will have it's own default error-handling middleware at the bottom of the stack which will just send the stack trace on the response body.
+**Note:** Even if there is no error-handling middlewares defined in our app, express will have it's own default error-handling middleware at the bottom of middleware stack which will just send the stack trace on the response body.
 
 ###Refernces
 

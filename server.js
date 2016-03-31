@@ -74,7 +74,7 @@ app.get('/users', function (req, res, next) {
         req.model = model;
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to get users.'
+        req.errorMessage = 'Failed to get users.';
         next(err);
     });
 });
@@ -86,7 +86,7 @@ app.get('/user/:id', function (req, res, next) {
         req.model = model;
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to get user.'
+        req.errorMessage = 'Failed to get user.';
         next(err);
     });
 });
@@ -96,7 +96,7 @@ app.post('/user/create', function (req, res, next) {
         req.model = model;
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to create user.'
+        req.errorMessage = 'Failed to create user.';
         next(err);
     });
 });
@@ -106,7 +106,7 @@ app.post('/user/update', function (req, res, next) {
         req.model = model;
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to update user.'
+        req.errorMessage = 'Failed to update user.';
         next(err);
     });
 });
@@ -118,7 +118,7 @@ app.delete('/user/destroy/:id', function (req, res, next) {
         req.model = model;
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to delete user.'
+        req.errorMessage = 'Failed to delete user.';
         next(err);
     });
 });
