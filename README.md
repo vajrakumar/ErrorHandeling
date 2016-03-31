@@ -91,7 +91,7 @@ Then comes to the built-in middleware function `express.static` (only when match
 app.use('/', express.static(__dirname + "/app"));
 ```
 
-Thereafter we have several application-level middlewares defined for specic path to handle the API request. And finally at the bototm we got one application-level middleware named `success` and one error-handling middleware named `error`, either of this will be called based on the response from PGSQL / Bookshelf. 
+Thereafter we have several application-level middlewares defined for specific path to handle the API request. And finally at the bototm we got one application-level middleware named `success` and one error-handling middleware named `error`, either of this will be called based on the response from PGSQL / Bookshelf. 
 
 ```
 app.use(success);
