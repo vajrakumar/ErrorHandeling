@@ -15,6 +15,7 @@ Ext.define('ErrorHandling.view.main.MainController', {
         var saveBtn = formpanel.down('#saveBtn');
         saveBtn.setText('Save');
         saveBtn.setHandler('onSaveUser');
+        formpanel.down('#resetBtn').show();
         panel.setActiveItem(1);
     },
 
@@ -26,6 +27,7 @@ Ext.define('ErrorHandling.view.main.MainController', {
         var saveBtn = formpanel.down('#saveBtn');
         saveBtn.setText('Update');
         saveBtn.setHandler('onUpdateUser');
+        formpanel.down('#resetBtn').hide();
         panel.setActiveItem(1);
     },
 

@@ -47,7 +47,9 @@ Ext.define('ErrorHandling.view.main.Form', {
             id: 'saveBtn'
         },
         {
+            id: 'resetBtn',
             text: 'Reset',
+            hidden: true,
             handler: 'onResetForm'
         },
         {

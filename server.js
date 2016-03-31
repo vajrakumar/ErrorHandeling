@@ -41,7 +41,8 @@ var User = bookshelf.Model.extend({
 function success(req, res, next) {
     var model = req.model;
     if (!model) {
-        return next(new Error('We are sorry, error occured.'));
+        req.errorMessage = 'Requested model not found.';
+        return next(new Error(req.errorMessage));
     }
     res.json({
         success: true,
@@ -50,14 +51,15 @@ function success(req, res, next) {
 }
 
 function error(err, req, res, next) {
-    logger.trace('*****************');
+    logger.trace('********Start********');
     logger.debug('path', req.path);
     logger.debug('method', req.method);
     logger.debug('query', req.query);
     logger.debug('body', req.body);
     logger.error(err);
-    logger.trace('*****************');
-    res.json(_.defaults(_.pick(err, ['code', 'message']), {
+    logger.trace('********End********');
+    res.json(_.extend(_.pick(err, ['code']), {
+        message: req.errorMessage || 'We are sorry, error occured.',
         success: false
     }));
 }
@@ -69,7 +71,10 @@ app.get('/users', function (req, res, next) {
     User.fetchAll().then(function (model) {
         req.model = model;
         next();
-    }).catch(next);
+    }).catch(function(err){
+        req.errorMessage = 'Failed to get users.'
+        next(err);
+    });
 });
 
 app.get('/user/:id', function (req, res, next) {
@@ -78,21 +83,30 @@ app.get('/user/:id', function (req, res, next) {
     }).then(function (model) {
         req.model = model;
         next();
-    }).catch(next);
+    }).catch(function(err){
+        req.errorMessage = 'Failed to get user.'
+        next(err);
+    });
 });
 
 app.post('/user/create', function (req, res, next) {
     new User(_.pick(req.body, ['fname', 'lname', 'age'])).save().then(function (model) {
         req.model = model;
         next();
-    }).catch(next);
+    }).catch(function(err){
+        req.errorMessage = 'Failed to create user.'
+        next(err);
+    });
 });
 
 app.post('/user/update', function (req, res, next) {
     new User(_.pick(req.body, ['id', 'fname', 'lname', 'age'])).save().then(function (model) {
         req.model = model;
         next();
-    }).catch(next);
+    }).catch(function(err){
+        req.errorMessage = 'Failed to update user.'
+        next(err);
+    });
 });
 
 app.delete('/user/destroy/:id', function (req, res, next) {
@@ -101,7 +115,10 @@ app.delete('/user/destroy/:id', function (req, res, next) {
     }).then(function (model) {
         req.model = model;
         next();
-    }).catch(next);
+    }).catch(function(err){
+        req.errorMessage = 'Failed to delete user.'
+        next(err);
+    });
 });
 
 app.use(success);
