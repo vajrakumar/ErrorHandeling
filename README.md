@@ -1,4 +1,4 @@
-# ErrorHandeling
+# ErrorHandling
 
 This project is to explain the error handeling in server side (Node.js & Express.js) and transferring the same to client side (ExtJS).
 It alos includes
