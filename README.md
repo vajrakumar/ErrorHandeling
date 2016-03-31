@@ -120,7 +120,7 @@ app.get('/user/:id', function (req, res, next) {
 });
 ```
 
-Where we use `bookshelf` to get the particular user record from `PGSQL`. Let's assume we have no user record associated with id 24, so it will throw an error (because we have passed `require: true` to `fetch`, if `require` is set to `false` `bookshelf` will not throw an error. for more details go through [Bookshelfjs](http://bookshelfjs.org/)) and the control is transferred to the catch block where we append a user friendly error message to request object (`req.errorMessage = 'Failed to get user.';`) then call `next` with error object (`next(err);`).
+Where we use `Bookshelf` to get the particular user record from `PGSQL`. Let's assume we have no user record associated with id 24, so it will throw an error (because we have passed `require: true` to `fetch`, if `require` is set to `false` `Bookshelf` will not throw an error. for more details go through [Bookshelfjs](http://bookshelfjs.org/)) and the control is transferred to the catch block where we append a user friendly error message to request object (`req.errorMessage = 'Failed to get user.';`) then call `next` with error object (`next(err);`).
 
 The only difference between error-hanlding middleware and others is, they should be defined after all other middlewares on the app object with 4 arguments instead of 3.
 
