@@ -149,7 +149,7 @@ function error(err, req, res, next) {
 
 As the catch block calls the next callback with a error object as first argument, the control will be transferd to the error-handling middleware, where we log the error and other essential information with log4js then send a error response to the client.
 
-Now let's assume we do have a user record associated with id 24, now the control will be transfered to the promise function where we append the user model on the request (res) object then calls next callback wihout any argument which means the control should be transered to the next application-level middleware and not error-handling middleware.
+Now let's assume we do have a user record associated with id 24, now the control will be transfered to the promise function where we append the user model on the request object then calls next callback wihout any argument which means the control should be transferred to the next application-level middleware and not error-handling middleware.
 
 ```
 function success(req, res, next) {
@@ -165,13 +165,13 @@ function success(req, res, next) {
 }
 ```
 
-The success middleware verifies whether the request (res) object has a valid model, if then send a success response to the client.
+The success middleware verifies whether the request object has a valid model, if then send a success response to the client.
 
 Whenver a invalid request is passed to the server, for i.e
 
 `http://localhost:3000/SomethingNotDefined`
 
-It will directly hit the success middle ware function (only after body parser as per the hierarchy), as the request (res) object won't have a valid model it will call the next callback with a generic error object, now the control will be transfered to error-handling middleware and failure response is sent.
+It will directly hit the success middle ware function (only after body parser as per the hierarchy), as the request object won't have a valid model it will call the next callback with a generic error object, now the control will be transfered to error-handling middleware and failure response is sent.
 
 **Note:** Even if there is no error-handling middlewares defined in our app, express will have it's own default error-handling middleware at the bottom of the stack which will just send the stack trace on the response body.
 
