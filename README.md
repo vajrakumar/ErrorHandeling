@@ -19,7 +19,6 @@ It alos includes
 * Download all the required node modules: `$ npm install`
 * Assuming you have already installed PostgreSQL in your local machine, open `pgAdmin III` and create a database named `users_directory`
 * Now restore the backup file `pgsql` found at root directory of the project to `users_directory`
-* Create a new directory called `logs` at root directory of the project, where all error logs will be stored.
 * Open `config.js` found at root directory of the project and update `connection` object.
 
 ```

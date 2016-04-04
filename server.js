@@ -1,15 +1,20 @@
 var express = require('express');
 var favicon = require('serve-favicon');
 var log4js = require('log4js');
+var fs = require('fs');
 var config = require('./config');
 var app = express();
+
+
+var logDirectory = __dirname + '/logs';
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
 
 log4js.configure({
     appenders: [{
         type: 'console'
     }, {
         type: 'file',
-        filename: './logs/ErrorHandling.log',
+        filename: logDirectory + '/ErrorHandling.log',
         maxLogSize: 1000000,
         backups: 10
     }]
