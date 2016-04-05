@@ -17,9 +17,10 @@ It alos includes
 * Check out a copy of the source from git: `$ git clone https://github.com/vajrakumar/ErrorHandling.git`
 * Navigate to root directory of the project: `$ cd ErrorHandling`
 * Download all the required node modules: `$ npm install`
-* Assuming you have already installed PostgreSQL in your local machine, open `pgAdmin III` and create a database named `users_directory`
-* Now restore the backup file `pgsql` found at root directory of the project to `users_directory`
-* Open `config.js` found at root directory of the project and update `connection` object.
+* Assuming you have already installed PostgreSQL in your local machine, open `pgAdmin III` and create a new database
+* Now restore the backup file `pgsql` found at root directory of the project to the newly created database
+* Make a copy of `config.js.sample` found at root directory of the project and rename it to `config.js`
+* Open `config.js` and update the connection object
 
 ```
        //connection details for database
@@ -27,9 +28,9 @@ It alos includes
            client: 'pg',
            connection: {
                host: '127.0.0.1',
-               user: 'YOUR_USER_NAME',
+               user: 'YOUR_USER',
                password: 'YOUR_PASSWORD',
-               database: 'users_directory',
+               database: 'YOUR_DATABASE',
                charset: 'utf8'
            }
        }
