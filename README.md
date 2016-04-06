@@ -111,16 +111,16 @@ app.get('/user/:id', function (req, res, next) {
     User.where('id', req.params.id).fetch({
         require: true
     }).then(function (model) {
-        req.model = model;
+        res.responseData = model.toJSON();
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to get user.';
+        res.errorMessage = 'Failed to get user.';
         next(err);
     });
 });
 ```
 
-Where we use `Bookshelf` to get the particular user record from `PGSQL`. Let's assume we have no user record associated with id 24, so it will throw an error (because we have passed `require: true` to `fetch`, if `require` is set to `false` `Bookshelf` will not throw an error. for more details go through [Bookshelfjs](http://bookshelfjs.org/)) and the control is transferred to the catch block where we append a user friendly error message to request object (`req.errorMessage = 'Failed to get user.';`) then call `next` with error object (`next(err);`).
+Where we use `Bookshelf` to get the particular user record from `PGSQL`. Let's assume we have no user record associated with id 24, so it will throw an error (because we have passed `require: true` to `fetch`, if `require` is set to `false` `Bookshelf` will not throw an error. for more details go through [Bookshelfjs](http://bookshelfjs.org/)) and the control is transferred to the catch block where we append a user friendly error message to response object (`res.errorMessage = 'Failed to get user.';`) then call `next` with error object (`next(err);`).
 
 The only difference between error-hanlding middleware and others is, they should be defined after all other middlewares on the app object with 4 arguments instead of 3.
 
@@ -136,12 +136,11 @@ function error(err, req, res, next) {
     var response = {};
     if (config.enableErrorDescription) {
         _.extend(response, {
-            errorCode: err.code,
-            errorMessage: err.message
+            error: err
         });
     }
     res.json(_.extend(response, {
-        message: req.errorMessage || 'We are sorry, error occured.',
+        message: res.errorMessage || 'We are sorry, error occured.',
         success: false
     }));
 }
@@ -149,18 +148,18 @@ function error(err, req, res, next) {
 
 As the catch block calls the `next` callback with a error object as first argument (`next(err);`), the control will be transferd to the error-handling middleware, where we log the error and other essential information with log4js then sends a error response to the client.
 
-Now let's assume we do have a user record associated with id 24, now the control will be transfered to the promise function where we append the user model to the request object (`req.model = model;`) then call `next` callback wihout any argument (`next()`) which means the control should be transferred to the next application-level middleware and not error-handling middleware.
+Now let's assume we do have a user record associated with id 24, now the control will be transfered to the promise function where we append the user models to the response object (`res.responseData = model.toJSON();`) then call `next` callback wihout any argument (`next()`) which means the control should be transferred to the next application-level middleware and not error-handling middleware.
 
 ```
 function success(req, res, next) {
-    var model = req.model;
-    if (!model) {
-        req.errorMessage = 'Requested resource not found.';
-        return next(new Error(req.errorMessage));
+    var responseData = res.responseData;
+    if (!responseData) {
+        res.errorMessage = 'Requested resource not found.';
+        return next(new Error(res.errorMessage));
     }
     res.json({
         success: true,
-        data: model.toJSON()
+        data: responseData
     });
 }
 ```

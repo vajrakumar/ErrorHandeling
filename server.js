@@ -36,14 +36,14 @@ var User = bookshelf.Model.extend({
 });
 
 function success(req, res, next) {
-    var model = req.model;
-    if (!model) {
-        req.errorMessage = 'Requested resource not found.';
-        return next(new Error(req.errorMessage));
+    var responseData = res.responseData;
+    if (!responseData) {
+        res.errorMessage = 'Requested resource not found.';
+        return next(new Error(res.errorMessage));
     }
     res.json({
         success: true,
-        data: model.toJSON()
+        data: responseData
     });
 }
 
@@ -58,12 +58,11 @@ function error(err, req, res, next) {
     var response = {};
     if (config.enableErrorDescription) {
         _.extend(response, {
-            errorCode: err.code,
-            errorMessage: err.message
+            error: err
         });
     }
     res.json(_.extend(response, {
-        message: req.errorMessage || 'We are sorry, error occured.',
+        message: res.errorMessage || 'We are sorry, error occured.',
         success: false
     }));
 }
@@ -76,10 +75,10 @@ app.use('/', express.static(__dirname + "/app"));
 
 app.get('/users', function (req, res, next) {
     User.fetchAll().then(function (model) {
-        req.model = model;
+        res.responseData = model.toJSON();
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to get users.';
+        res.errorMessage = 'Failed to get users.';
         next(err);
     });
 });
@@ -88,30 +87,30 @@ app.get('/user/:id', function (req, res, next) {
     User.where('id', req.params.id).fetch({
         require: true
     }).then(function (model) {
-        req.model = model;
+        res.responseData = model.toJSON();
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to get user.';
+        res.errorMessage = 'Failed to get user.';
         next(err);
     });
 });
 
 app.post('/user/create', function (req, res, next) {
     new User(_.pick(req.body, ['fname', 'lname', 'age'])).save().then(function (model) {
-        req.model = model;
+        res.responseData = model.toJSON();
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to create user.';
+        res.errorMessage = 'Failed to create user.';
         next(err);
     });
 });
 
 app.post('/user/update', function (req, res, next) {
     new User(_.pick(req.body, ['id', 'fname', 'lname', 'age'])).save().then(function (model) {
-        req.model = model;
+        res.responseData = model.toJSON();
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to update user.';
+        res.errorMessage = 'Failed to update user.';
         next(err);
     });
 });
@@ -120,10 +119,10 @@ app.delete('/user/destroy/:id', function (req, res, next) {
     User.where('id', req.params.id).destroy({
         require: true
     }).then(function (model) {
-        req.model = model;
+        res.responseData = model.toJSON();
         next();
     }).catch(function (err) {
-        req.errorMessage = 'Failed to delete user.';
+        res.errorMessage = 'Failed to delete user.';
         next(err);
     });
 });
