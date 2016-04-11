@@ -1,10 +1,11 @@
 var express = require('express');
 var favicon = require('serve-favicon');
+var bodyParser = require('body-parser');
 var log4js = require('log4js');
+var _ = require('underscore');
 var fs = require('fs');
 var config = require('./config');
 var app = express();
-
 
 var logDirectory = __dirname + '/logs';
 fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
@@ -19,9 +20,6 @@ log4js.configure({
         backups: 10
     }]
 });
-
-var _ = require('underscore');
-var bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -48,6 +46,8 @@ function success(req, res, next) {
 }
 
 function error(err, req, res, next) {
+    //adds all missing frames to stack
+    Error.captureStackTrace(err);
     logger.trace('********Start********');
     logger.debug('path', req.path);
     logger.debug('method', req.method);
@@ -58,7 +58,7 @@ function error(err, req, res, next) {
     var response = {};
     if (config.enableErrorDescription) {
         _.extend(response, {
-            error: err
+            error: _.pick(err, ['code', 'file', 'line', 'message', 'severity', 'stack'])
         });
     }
     res.json(_.extend(response, {
