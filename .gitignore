@@ -1,0 +1,7 @@
+.idea
+config.js
+node_modules
+logs/*
+app/ext
+app/build
+app/.idea
